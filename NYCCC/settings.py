@@ -26,7 +26,10 @@ SECRET_KEY = '0656cadb-2fff-4063-ba91-939bd4f588e5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '.localhost',
+    u'.nyccc.herokuapp.com'
+]
 
 
 # Application definition

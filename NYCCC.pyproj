@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\templates\index.html" />
-    <Content Include="app\templates\graph.html" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>

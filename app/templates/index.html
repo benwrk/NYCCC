@@ -1,9 +1,15 @@
 <html>
-<head><title></title></head>
+<head>
+    <title>NYCCC</title>
+</head>
 
 <body>
 
-{{ content }}
+{% if graph %}
+<div id="graph">
+    {{ graph|safe }}
+</div>
+{% endif %}
 
 </body>
 </html>

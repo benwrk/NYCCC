@@ -5,3 +5,4 @@ pandas
 matplotlib
 cufflinks
 plotly
+gunicorn

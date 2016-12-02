@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import TemplateView
+import datetime, dateutil
 import pandas
 import numpy
 import matplotlib
@@ -9,61 +10,65 @@ import plotly
 import plotly.offline
 import plotly.graph_objs
 
-# Create your views here.
-
 def home(request):
     cufflinks.go_offline()
     plotly.offline.init_notebook_mode()
 
     url = 'https://data.cityofnewyork.us/resource/h9gi-nx95.json'
     collisions = pandas.read_json(url)
-    contributing_factors = pandas.concat([collisions.contributing_factor_vehicle_1,
-            collisions.contributing_factor_vehicle_2,
-            collisions.contributing_factor_vehicle_3,
-            collisions.contributing_factor_vehicle_4,
-            collisions.contributing_factor_vehicle_5])
 
-    temp = pandas.DataFrame({
-        'contributing_factors': contributing_factors.value_counts()
+    title_str = ''
+
+    if 'from' in request.GET:
+        collisions = collisions[collisions['date'] >= request.GET['from']]
+        title_str = 'From ' + request.GET['from'] + ' to '
+        if 'to' not in request.GET:
+            title_str = title_str + 'present'
+    if 'to' in request.GET:
+        collisions = collisions[collisions['date'] <= request.GET['to']]
+        title_str = title_str + request.GET['to']
+        if 'from' not in request.GET:
+            title_str = 'Before ' + title_str
+    
+    contributing_factors = pandas.concat([collisions.contributing_factor_vehicle_1,
+        collisions.contributing_factor_vehicle_2,
+        collisions.contributing_factor_vehicle_3,
+        collisions.contributing_factor_vehicle_4,
+        collisions.contributing_factor_vehicle_5])
+
+    vccf_dataframe = pandas.DataFrame({
+        'vcounts': contributing_factors.value_counts()
     })
 
-    df = temp[temp.index != 'Unspecified']
-    df.sort_values(by='contributing_factors', ascending=True)
-    data = plotly.graph_objs.Data([
-        plotly.graph_objs.Bar(
-            y = df.index,
-            x = df.contributing_factors,
-            orientation = 'h'
-        )
-    ])
+    if request.GET.get('no_unspecified', 'False') == 'True':
+        vccf_dataframe = vccf_dataframe[vccf_dataframe.index != 'Unspecified']
 
-    layout = plotly.graph_objs.Layout(
-        height = '1000',
-        margin = plotly.graph_objs.Margin(l=300),
-        title = 'Vehicles Collisions Contributing Factors'
-    )
+    vccf_figure = {
+        'data': [
+            {
+                'labels': vccf_dataframe.index,
+                'values': vccf_dataframe.vcounts,
+                'type': 'pie',
+                'name': 'Factors',
+                'hoverinfo':'label+percent+name+value',
+                'hole': .3,
+                'type': 'pie'
+            }
+        ],
+        'layout': {
+            'title': 'New York City<br>Vehicles Collisions Contributing Factors<br>' + title_str,
+            'annotations': [
+                {
+                    'font': {
+                        'size': 20
+                    },
+                    'showarrow': False,
+                    'text': 'Factors',
+                }
+            ]
+        }
+    }
 
-    fig = plotly.graph_objs.Figure(data=data, layout=layout)
-    plot = plotly.offline.plot(fig, auto_open=False, output_type='div')
+    vccf_plot = plotly.offline.plot(vccf_figure, auto_open=False, output_type='div')
 
-    return render(request, 'index.html', { 'graph': plot })
-
-#class Graph(TemplateView):
-#    template_name = 'graph.html'
-
-#    def get_context_data(self, **kwargs):
-#        context = super(Graph, self).get_context_data(**kwargs)
-
-#        x = [-2,0,4,6,7]
-#        y = [q**2-q+3 for q in x]
-#        trace1 = plotly.graph_objs.Scatter(x=x, y=y, marker={'color': 'red', 'symbol': 104, 'size': "10"},
-#                            mode="lines",  name='1st Trace')
-
-#        data=plotly.graph_objs.Data([trace1])
-#        layout=plotly.graph_objs.Layout(title="Meine Daten", xaxis={'title':'x1'}, yaxis={'title':'x2'})
-#        figure=plotly.graph_objs.Figure(data=data,layout=layout)
-#        div = plotly.offline.plot(figure, auto_open=False, output_type='div')
-
-#        context['graph'] = div
-
-#        return context
+    return render(request, 'index.html', { 'graph': vccf_plot })

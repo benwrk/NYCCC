@@ -1,12 +1,14 @@
 # NYCCC
 ## What is NYCCC
-**NYCCC** stand for the **N**ew **Y**ork **C**ity **C**ar **C**ollision, it's the simple web service that summarize the *Contributing Factors* of car collisions
-in the *New York City* into an easy to understand and intepret pie chart.
+**NYCCC** stand for the **N**ew **Y**ork **C**ity **C**ar **C**ollision, it's the simple web service that summarize the *Contributing Factors* of car collisions in the *New York City* into an easy to understand and intepret pie chart.
 
 ## The open data
 We use the data from the New York City's [**NYC Open Data**](https://data.cityofnewyork.us/) API. Which is being fetched live every time the webpage is loaded.
 
-## How to use
+## Project collaborators
+1. [Benjapol Worakan](https://github.com/benwrk) 5710546577
+
+## How to get it up running
 ### Live site
 Just visit [http://nyccc.herokuapp.com](http://nyccc.herokuapp.com) to see the site live.
 
@@ -24,4 +26,4 @@ Start from the command-line interface of your operating system *(e.g. Terminal, 
 4. Install project requirements `pip install -r requirements.txt`.
 5. Initialize project database `python manage.py makemigrations` and then `python manage.py migrate` right after.
 6. Now we're ready, run the project. On **Windows**: `python manage.py runserver 0.0.0.0:8000`. On **UNIX-based systems**: `gunicorn NYCCC.wsgi`.
-7. The site is live, visit [http://localhost:8000](http://localhost:8000) on your browser.
+7. The site is live, visit [http://localhost:8000](http://localhost:8000) on your browser to get started.

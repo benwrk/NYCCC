@@ -1,5 +1,4 @@
-# NYCCC
-## What is NYCCC
+# What is NYCCC?
 **NYCCC** stand for the **N**ew **Y**ork **C**ity **C**ar **C**ollision, it's the simple web service that summarize the *Contributing Factors* of car collisions in the *New York City* into an easy to understand and intepret pie chart.
 
 ## The open data
